@@ -32,7 +32,7 @@ class ProductRepositoryImpl @Inject constructor(
             .map { entities -> entities.mapNotNull { it.toDomain() } }
             .onStart {
                 refreshScope.launch {
-                    if (refreshMutex.tryLock()) return@launch
+                    if (!refreshMutex.tryLock()) return@launch
                     try {
                         refreshPRoduct()
                     } catch (e: Exception) {
