@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.embot.testingcourse.productList.presentation.component.FilterMenu
 
 
 @Composable
@@ -47,7 +48,7 @@ fun ProductListScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         when(val state = uiState) {
-            ProdcutListUiState.Loading -> {
+            ProductListUiState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize()
                         .padding(paddingValues),
@@ -56,7 +57,7 @@ fun ProductListScreen(
                     CircularProgressIndicator()
                 }
             }
-            is ProdcutListUiState.Error -> {
+            is ProductListUiState.Error -> {
                 Box(
                     modifier = Modifier.fillMaxSize()
                         .padding(paddingValues),
@@ -67,18 +68,19 @@ fun ProductListScreen(
                     )
                 }
             }
-            is ProdcutListUiState.Success -> {
+            is ProductListUiState.Success -> {
                 Column(
                     modifier = Modifier.fillMaxSize()
                         .padding(paddingValues)
-                        .background(Color.Blue),
                 ) {
+                    FilterMenu(state = state) { category ->
+                        productListViewModel.setCategory(category)
+                    }
                     LazyColumn {
                         items(state.productList) { product ->
                             Box(
                                 modifier = Modifier.fillMaxWidth()
                                     .height(50.dp)
-                                    .background(Color.Red)
                             ) {
                                 Text(
                                     text = product.name,

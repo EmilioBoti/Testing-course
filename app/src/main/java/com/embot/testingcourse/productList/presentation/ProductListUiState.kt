@@ -1,0 +1,13 @@
+package com.embot.testingcourse.productList.presentation
+
+import com.embot.testingcourse.productList.domain.model.Product
+
+sealed class ProductListUiState {
+    data object Loading: ProductListUiState()
+    data class Error(val message: String): ProductListUiState()
+    data class Success(
+        val productList: List<Product>,
+        val categories: List<String>,
+        val selectedCategory: String?
+    ): ProductListUiState()
+}
