@@ -1,6 +1,7 @@
 package com.embot.testingcourse.productList.data.repository
 
 import com.embot.testingcourse.core.domain.coroutines.DispatcherProvider
+import com.embot.testingcourse.productList.data.local.LocalDataSource
 import com.embot.testingcourse.productList.data.remote.RemoteDataSource
 import com.embot.testingcourse.productList.domain.model.Product
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
@@ -10,6 +11,7 @@ import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
     val dispatcher: DispatcherProvider,
+    val localDataSource: LocalDataSource,
     val remoteDataSource: RemoteDataSource
 ): ProductRepository {
 
