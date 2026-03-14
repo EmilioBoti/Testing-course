@@ -65,7 +65,7 @@ fun ProductListScreen(
                     modifier = Modifier.fillMaxSize()
                         .padding(paddingValues),
                 ) {
-                    
+
                 }
             }
         }
