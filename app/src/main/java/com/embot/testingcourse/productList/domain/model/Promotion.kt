@@ -1,6 +1,7 @@
 package com.embot.testingcourse.productList.domain.model
 
-import kotlin.time.Instant
+import java.time.Instant
+
 
 enum class PromotionType {
     PERCENT,
@@ -14,6 +15,5 @@ data class Promotion(
     val value: Double,
     val buyQuantity: Int? = null,
     val startTime: Instant,
-    val endTime: Instant,
-
+    val endTime: Instant
 )
