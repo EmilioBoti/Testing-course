@@ -73,9 +73,11 @@ fun ProductListScreen(
                     modifier = Modifier.fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    FilterMenu(state = state) { category ->
-                        productListViewModel.setCategory(category)
-                    }
+                    FilterMenu(
+                        state = state,
+                        onCategorySelected = { category -> productListViewModel.setCategory(category) },
+                        onSortSelected = { sortOption -> productListViewModel.setSortOption(sortOption) }
+                    )
                     LazyColumn {
                         items(state.productList) { product ->
                             Box(

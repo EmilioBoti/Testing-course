@@ -2,6 +2,7 @@ package com.embot.testingcourse.productList.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.embot.testingcourse.productList.domain.model.SortOption
 import com.embot.testingcourse.productList.domain.usecase.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,7 +37,12 @@ class ProductListViewModel @Inject constructor(
         getProductsUseCase()
             .onEach { products ->
                 val categories: List<String> = products.map { it.category }.distinct().sorted()
-                _uiState.value = ProductListUiState.Success(products, categories, null)
+                _uiState.value = ProductListUiState.Success(
+                    productList = products,
+                    categories = categories,
+                    selectedCategory = null,
+                    sortOption = SortOption.NONE
+                )
             }
             .catch { e: Throwable ->
                 _uiState.value = ProductListUiState.Error(e.message.orEmpty())
@@ -48,6 +54,10 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch {
             // call settingsRepository
         }
+    }
+
+    fun setSortOption(sortOption: SortOption) {
+
     }
 
 }
