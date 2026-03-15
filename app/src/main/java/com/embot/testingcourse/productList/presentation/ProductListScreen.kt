@@ -1,6 +1,7 @@
 package com.embot.testingcourse.productList.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.embot.testingcourse.productList.presentation.component.FilterMenu
+import com.embot.testingcourse.productList.presentation.component.ProductItem
 
 
 @Composable
@@ -78,15 +81,41 @@ fun ProductListScreen(
                         onCategorySelected = { category -> productListViewModel.setCategory(category) },
                         onSortSelected = { sortOption -> productListViewModel.setSortOption(sortOption) }
                     )
-                    LazyColumn {
-                        items(state.productList) { product ->
-                            Box(
-                                modifier = Modifier.fillMaxWidth()
-                                    .height(50.dp)
+                    Text(
+                        text = "${state.productList.size} products",
+                        modifier = Modifier.padding(
+                            horizontal = 16.dp,
+                            vertical = 4.dp
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    if (state.productList.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 Text(
-                                    text = product.name,
-                                    fontSize = 20.sp
+                                    text = "🔍",
+                                    style = MaterialTheme.typography.displayMedium
+                                )
+                                Text(
+                                    text = "Products not found",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
+                        }
+                    } else {
+                        LazyColumn {
+                            items(state.productList) { product ->
+                                ProductItem(
+                                    product = product,
+                                    onClick = {}
                                 )
                             }
                         }
