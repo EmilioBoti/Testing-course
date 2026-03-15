@@ -25,6 +25,9 @@ class ProductListViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<ProductListUiState> = MutableStateFlow(ProductListUiState.Loading)
     val uiState: StateFlow<ProductListUiState> = _uiState.asStateFlow()
 
+    private val _filterVisible: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val filterVisible: StateFlow<Boolean> = _filterVisible.asStateFlow()
+
     private val _events: MutableSharedFlow<ProductListEvent> = MutableSharedFlow<ProductListEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<ProductListEvent> = _events
 
@@ -58,6 +61,10 @@ class ProductListViewModel @Inject constructor(
 
     fun setSortOption(sortOption: SortOption) {
 
+    }
+
+    fun setFilterVisible(showFilter: Boolean) {
+        _filterVisible.update { showFilter }
     }
 
 }
