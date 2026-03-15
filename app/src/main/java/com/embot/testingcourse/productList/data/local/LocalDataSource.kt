@@ -3,6 +3,7 @@ package com.embot.testingcourse.productList.data.local
 import com.embot.testingcourse.productList.data.local.db.dao.ProductDao
 import com.embot.testingcourse.productList.data.local.db.dao.PromotionDao
 import com.embot.testingcourse.productList.data.local.db.entity.ProductEntity
+import com.embot.testingcourse.productList.data.local.db.entity.PromotionEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -15,5 +16,9 @@ class LocalDataSource @Inject constructor(
 
     suspend fun saveProducts(productsEntity: List<ProductEntity>) {
         productDao.replaceAll(productsEntity)
+    }
+
+    suspend fun savePromotions(promotions: List<PromotionEntity>) {
+        promotionDao.replaceAll(promotions)
     }
 }

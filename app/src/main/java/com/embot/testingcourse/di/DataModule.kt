@@ -8,7 +8,9 @@ import com.embot.testingcourse.productList.data.local.db.MiniMarketDatabase
 import com.embot.testingcourse.productList.data.local.db.dao.ProductDao
 import com.embot.testingcourse.productList.data.local.db.dao.PromotionDao
 import com.embot.testingcourse.productList.data.repository.ProductRepositoryImpl
+import com.embot.testingcourse.productList.data.repository.PromotionRepositoryImpl
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
+import com.embot.testingcourse.productList.domain.repository.PromotionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +34,12 @@ object DataModule {
     @Singleton
     fun provideProductRepository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository {
         return  productRepositoryImpl
+    }
+
+    @Provides
+    @Singleton
+    fun providePromotionRepository(promotionRepository: PromotionRepositoryImpl): PromotionRepository {
+        return promotionRepository
     }
 
     @Provides
