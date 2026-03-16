@@ -11,7 +11,7 @@ data class PromotionEntity(
     val type: String,
     val percent: Int? = null,
     val buyX: Int? = null,
-    val payX: Int? = null,
+    val payY: Int? = null,
     val startAtEpoch: Long,
     val endAtEpoch: Long
 )

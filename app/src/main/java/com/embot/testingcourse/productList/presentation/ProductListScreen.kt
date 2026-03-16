@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
 import com.embot.testingcourse.productList.presentation.component.FilterMenu
 import com.embot.testingcourse.productList.presentation.component.HomeTopAppBar
 import com.embot.testingcourse.productList.presentation.component.ProductItem
@@ -126,9 +127,9 @@ fun ProductListScreen(
                         }
                     } else {
                         LazyColumn {
-                            items(state.productList) { product ->
+                            items(state.productList) { item: ProductWithPromotion ->
                                 ProductItem(
-                                    product = product,
+                                    item = item,
                                     onClick = {}
                                 )
                             }

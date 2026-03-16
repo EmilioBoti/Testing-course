@@ -11,7 +11,7 @@ import java.time.Instant
 
 fun PromotionResponse.toEntity(json: Json): PromotionEntity? {
 
-    if (startAtEpoch === null || endAtEpoch ===  null) return null
+    if (startAtEpoch == null || endAtEpoch ==  null) return null
 
     val productIds = listOf(this.productId)
     val productIdsJson = json.encodeToString(
@@ -24,9 +24,9 @@ fun PromotionResponse.toEntity(json: Json): PromotionEntity? {
         type = this.type,
         percent = this.percent,
         buyX = this.buyX,
-        payX = this.payX,
-        startAtEpoch = 0,
-        endAtEpoch = 0
+        payY = this.payY,
+        startAtEpoch = startAtEpoch,
+        endAtEpoch = endAtEpoch
     )
 }
 
@@ -46,7 +46,7 @@ fun PromotionEntity.toDomain(json: Json): Promotion? {
 
     val finalofferValue = when(finalType) {
         PromotionType.PERCENT -> percent
-        PromotionType.BUY_X_PAY_Y -> payX
+        PromotionType.BUY_X_PAY_Y -> payY
     }?.toDouble()
 
     finalofferValue ?: return null
@@ -56,6 +56,7 @@ fun PromotionEntity.toDomain(json: Json): Promotion? {
         type = finalType,
         productIds = decodedProductIds,
         value = finalofferValue,
+        buyQuantity = buyX,
         startTime = Instant.ofEpochSecond(startAtEpoch),
         endTime = Instant.ofEpochSecond(endAtEpoch)
     )
