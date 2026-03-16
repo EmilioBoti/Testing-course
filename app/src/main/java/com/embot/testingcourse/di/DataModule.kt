@@ -1,6 +1,9 @@
 package com.embot.testingcourse.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.embot.testingcourse.core.data.coroutine.DefaultDispatcherProvider
 import com.embot.testingcourse.core.domain.coroutines.DispatcherProvider
@@ -9,14 +12,18 @@ import com.embot.testingcourse.productList.data.local.db.dao.ProductDao
 import com.embot.testingcourse.productList.data.local.db.dao.PromotionDao
 import com.embot.testingcourse.productList.data.repository.ProductRepositoryImpl
 import com.embot.testingcourse.productList.data.repository.PromotionRepositoryImpl
+import com.embot.testingcourse.productList.data.repository.SettingsRepositoryImpl
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
 import com.embot.testingcourse.productList.domain.repository.PromotionRepository
+import com.embot.testingcourse.productList.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,6 +51,12 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideSettingsRepository(settingsRepository: SettingsRepositoryImpl): SettingsRepository {
+        return settingsRepository
+    }
+
+    @Provides
+    @Singleton
     fun provideDatabase(@ApplicationContext context: Context): MiniMarketDatabase {
         return Room.databaseBuilder(
             context = context,
@@ -57,5 +70,11 @@ object DataModule {
 
     @Provides
     fun providePromotionDao(database: MiniMarketDatabase): PromotionDao = database.promotionDao()
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return context.dataStore
+    }
 
 }
