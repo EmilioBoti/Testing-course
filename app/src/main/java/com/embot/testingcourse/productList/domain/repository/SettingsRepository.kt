@@ -16,5 +16,5 @@ interface SettingsRepository {
     suspend fun setInStockOnly(value: Boolean)
     suspend fun setSelectedCategory(value: String?)
     suspend fun setFilterVisible(value: Boolean)
-    suspend fun setsSortOption(value: SortOption)
+    suspend fun setSortOption(value: SortOption)
 }
