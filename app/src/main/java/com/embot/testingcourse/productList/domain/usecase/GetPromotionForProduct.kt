@@ -1,6 +1,6 @@
 package com.embot.testingcourse.productList.domain.usecase
 
-import com.embot.testingcourse.core.presentation.navigation.extension.roundTo2Decimals
+import com.embot.testingcourse.core.presentation.extension.roundTo2Decimals
 import com.embot.testingcourse.productList.domain.model.Product
 import com.embot.testingcourse.productList.domain.model.ProductPromotion
 import com.embot.testingcourse.productList.domain.model.Promotion

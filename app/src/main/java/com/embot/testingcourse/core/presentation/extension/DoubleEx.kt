@@ -1,4 +1,4 @@
-package com.embot.testingcourse.core.presentation.navigation.extension
+package com.embot.testingcourse.core.presentation.extension
 
 import kotlin.math.roundToInt
 
