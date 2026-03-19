@@ -24,7 +24,7 @@ class ProductDetailViewModel @Inject constructor(): ViewModel() {
     }
 
     fun addToCart() {
-        
+
     }
 
 
