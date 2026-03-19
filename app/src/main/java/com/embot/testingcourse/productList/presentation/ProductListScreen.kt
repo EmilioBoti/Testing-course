@@ -38,7 +38,8 @@ import com.embot.testingcourse.productList.presentation.component.ProductItem
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
-    navigatoToSettings: () -> Unit
+    navigatoToSettings: () -> Unit,
+    navigatoToProductDetail: (String) -> Unit,
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val filterVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
@@ -131,7 +132,7 @@ fun ProductListScreen(
                             items(state.productList) { item: ProductWithPromotion ->
                                 ProductItem(
                                     item = item,
-                                    onClick = {}
+                                    onClick = { item -> navigatoToProductDetail(item.product.id) }
                                 )
                             }
                         }
@@ -145,5 +146,5 @@ fun ProductListScreen(
 @Preview(showBackground = true)
 @Composable
 fun ProductListScreenPreview() {
-    ProductListScreen() {}
+//    ProductListScreen("") {}
 }

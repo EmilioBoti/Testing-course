@@ -20,7 +20,8 @@ fun NavigationGraph() {
     val entries = entryProvider<NavKey> {
         entry<Screen.ProductList> {
             ProductListScreen(
-                navigatoToSettings = { backStack.add(Screen.Settings) }
+                navigatoToSettings = { backStack.add(Screen.Settings) },
+                navigatoToProductDetail = { productId -> backStack.add(Screen.ProductDetail(productId)) }
             )
         }
         entry<Screen.Cart> {
@@ -29,8 +30,9 @@ fun NavigationGraph() {
                 fontSize = 30.sp
             )
         }
-        entry<Screen.ProductDetail> {
+        entry<Screen.ProductDetail> { route ->
             ProductDetailScreen(
+                productId = route.productId,
                 onBack = { backStack.removeLastOrNull() }
             )
         }

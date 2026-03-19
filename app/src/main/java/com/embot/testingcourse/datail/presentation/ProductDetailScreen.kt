@@ -122,103 +122,101 @@ fun ProductDetailScreen(
                                             vertical = 4.dp
                                         )
                                     )
+                                }
 
-                                    HorizontalDivider()
+                                Text(text = product.description)
 
-                                    Text(text = product.description)
+                                HorizontalDivider()
 
-                                    HorizontalDivider()
-
-                                    if (discountPrice != null) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                        ) {
-                                            Text(
-                                                text = product.price.toString(),
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                textDecoration = TextDecoration.LineThrough
-                                            )
-
-                                            Text(
-                                                text = discountPrice.toString(),
-                                                style = MaterialTheme.typography.displaySmall,
-                                                color = MaterialTheme.colorScheme.primary,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        }
-
-                                        Surface(
-                                            shape = RoundedCornerShape(8.dp),
-                                            color = MaterialTheme.colorScheme.errorContainer
-                                        ) {
-                                            Text(
-                                                text = "${(promotion as ProductPromotion.Percent).percent.toInt()} %OFF",
-                                                style = MaterialTheme.typography.titleMedium,
-                                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                                fontWeight = FontWeight.Bold,
-                                                modifier = Modifier.padding(
-                                                    horizontal = 12.dp,
-                                                    vertical = 4.dp
-                                                )
-                                            )
-                                        }
-                                    } else {
+                                if (discountPrice != null) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
                                         Text(
                                             text = product.price.toString(),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            textDecoration = TextDecoration.LineThrough
+                                        )
+
+                                        Text(
+                                            text = discountPrice.toString(),
                                             style = MaterialTheme.typography.displaySmall,
+                                            color = MaterialTheme.colorScheme.primary,
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
 
-                                    if (promotion is ProductPromotion.BuyXPayY) {
-                                        Surface(
-                                            shape = RoundedCornerShape(8.dp),
-                                            color = MaterialTheme.colorScheme.errorContainer
-                                        ) {
-                                            Text(
-                                                text = "PROMO: ${promotion.label}",
-                                                style = MaterialTheme.typography.titleMedium,
-                                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                                fontWeight = FontWeight.Bold,
-                                                modifier = Modifier.padding(
-                                                    horizontal = 12.dp,
-                                                    vertical = 4.dp
-                                                )
-                                            )
-                                        }
-                                    }
-
-                                    HorizontalDivider()
-
-                                    val ihasStock = product.stock > 0
-                                    val colorStock =
-                                        if (ihasStock) MaterialTheme.colorScheme.onSecondaryContainer
-                                        else MaterialTheme.colorScheme.onErrorContainer
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = MaterialTheme.colorScheme.errorContainer
                                     ) {
                                         Text(
-                                            text = "Stock available",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.surfaceVariant,
-                                        )
-
-                                        Surface(
-                                            shape = RoundedCornerShape(12.dp),
-                                            color = colorStock
-                                        ) {
-                                            Text(
-                                                text = if (ihasStock) "${product.stock} in stock"  else "Not in stock",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                color = colorStock,
-                                                fontWeight = FontWeight.Bold
+                                            text = "${(promotion as ProductPromotion.Percent).percent.toInt()} %OFF",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = MaterialTheme.colorScheme.onErrorContainer,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(
+                                                horizontal = 12.dp,
+                                                vertical = 4.dp
                                             )
-                                        }
+                                        )
+                                    }
+                                } else {
+                                    Text(
+                                        text = product.price.toString(),
+                                        style = MaterialTheme.typography.displaySmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+
+                                if (promotion is ProductPromotion.BuyXPayY) {
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = MaterialTheme.colorScheme.errorContainer
+                                    ) {
+                                        Text(
+                                            text = "PROMO: ${promotion.label}",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = MaterialTheme.colorScheme.onErrorContainer,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(
+                                                horizontal = 12.dp,
+                                                vertical = 4.dp
+                                            )
+                                        )
+                                    }
+                                }
+
+                                HorizontalDivider()
+
+                                val ihasStock = product.stock > 0
+                                val colorStock =
+                                    if (ihasStock) MaterialTheme.colorScheme.onSecondaryContainer
+                                    else MaterialTheme.colorScheme.onErrorContainer
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Stock available",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                    )
+
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = colorStock
+                                    ) {
+                                        Text(
+                                            text = if (ihasStock) "${product.stock} in stock"  else "Not in stock",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = colorStock,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
                             }
