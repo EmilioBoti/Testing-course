@@ -25,18 +25,26 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.embot.testingcourse.core.domain.model.ThemeMode
 import com.embot.testingcourse.core.presentation.components.MarketTopAppBar
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
+
+    val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             MarketTopAppBar(title = "Settings" , onBackClick = onBack)
@@ -88,7 +96,7 @@ fun SettingsScreen(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                text = "Just product in stock",
+                                text = "Only product in stock",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium
                             )
@@ -100,8 +108,8 @@ fun SettingsScreen(
                         }
 
                         Switch(
-                            checked = true,
-                            onCheckedChange = {}
+                            checked = uiState.inStockOnly,
+                            onCheckedChange = { isOnlyStock -> settingsViewModel.setInStockOnly(isOnlyStock)}
                         )
 
                     }
@@ -188,24 +196,24 @@ fun SettingsScreen(
                         ) {
                             SegmentedButton(
                                 shape = SegmentedButtonDefaults.itemShape(0, 3),
-                                onClick = {},
-                                selected = false,
+                                onClick = { settingsViewModel.setThemeMode(ThemeMode.SYSTEM) },
+                                selected = uiState.themeMode == ThemeMode.SYSTEM,
                                 label = { Text(
                                     text = "System"
                                 )}
                             )
                             SegmentedButton(
                                 shape = SegmentedButtonDefaults.itemShape(1, 3),
-                                onClick = {},
-                                selected = true,
+                                onClick = { settingsViewModel.setThemeMode(ThemeMode.DARK) },
+                                selected = uiState.themeMode == ThemeMode.DARK,
                                 label = { Text(
                                     text = "Dark"
                                 )}
                             )
                             SegmentedButton(
                                 shape = SegmentedButtonDefaults.itemShape(2, 3),
-                                onClick = {},
-                                selected = false,
+                                onClick = { settingsViewModel.setThemeMode(ThemeMode.LIGHT) },
+                                selected = uiState.themeMode == ThemeMode.LIGHT,
                                 label = { Text(
                                     text = "Light"
                                 )}
