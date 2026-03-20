@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.embot.testingcourse.R
 import com.embot.testingcourse.core.presentation.components.MarketTopAppBar
+import com.embot.testingcourse.datail.presentation.component.AddToCartButton
 import com.embot.testingcourse.productList.domain.model.ProductPromotion
 
 @Composable
@@ -52,6 +53,14 @@ fun ProductDetailScreen(
                 title = uiState.item?.product?.name.orEmpty(),
                 onBackClick = onBack
             )
+        },
+        bottomBar = {
+            AddToCartButton(
+                isLoading = uiState.isLoading,
+                product = uiState.item?.product
+            ) {
+                productDetailViewModel.addToCart()
+            }
         }
     ) { paddingValues ->
         Column(
@@ -87,7 +96,7 @@ fun ProductDetailScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(
-                                defaultElevation = 16.dp
+                                defaultElevation = 8.dp
                             ),
                             shape = RoundedCornerShape(16.dp)
                         ) {
@@ -124,7 +133,9 @@ fun ProductDetailScreen(
                                     )
                                 }
 
-                                Text(text = product.description)
+                                if (product.description.isNotBlank()) {
+                                    Text(text = product.description)
+                                }
 
                                 HorizontalDivider()
 
@@ -214,8 +225,12 @@ fun ProductDetailScreen(
                                         Text(
                                             text = if (ihasStock) "${product.stock} in stock"  else "Not in stock",
                                             style = MaterialTheme.typography.bodyLarge,
-                                            color = colorStock,
-                                            fontWeight = FontWeight.Bold
+                                            color = MaterialTheme.colorScheme.onErrorContainer,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(
+                                                horizontal = 12.dp,
+                                                vertical = 6.dp
+                                            )
                                         )
                                     }
                                 }
