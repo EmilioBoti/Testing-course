@@ -92,7 +92,8 @@ fun ProductListScreen(
                 ) {
                     Text(
                         text = "Error",
-                        fontSize = 24.sp
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             }

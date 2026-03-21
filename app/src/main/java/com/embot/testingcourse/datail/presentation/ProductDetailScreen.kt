@@ -113,7 +113,10 @@ fun ProductDetailScreen(
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = 8.dp
                             ),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
                         ) {
                             Column(
                                 modifier = Modifier.padding(24.dp),
@@ -130,6 +133,7 @@ fun ProductDetailScreen(
                                 Text(
                                     text = product.name,
                                     style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Bold
                                 )
 
@@ -149,7 +153,11 @@ fun ProductDetailScreen(
                                 }
 
                                 if (product.description.isNotBlank()) {
-                                    Text(text = product.description)
+                                    Text(
+                                        text = product.description,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
                                 }
 
                                 HorizontalDivider()
@@ -217,9 +225,14 @@ fun ProductDetailScreen(
 
                                 HorizontalDivider()
 
-                                val ihasStock = product.stock > 0
-                                val colorStock =
-                                    if (ihasStock) MaterialTheme.colorScheme.onSecondaryContainer
+                                val hasStock = product.stock > 0
+
+                                val stockContainerColor =
+                                    if (hasStock) MaterialTheme.colorScheme.primaryContainer
+                                    else MaterialTheme.colorScheme.errorContainer
+
+                                val stockContentColor =
+                                    if (hasStock) MaterialTheme.colorScheme.onPrimaryContainer
                                     else MaterialTheme.colorScheme.onErrorContainer
 
                                 Row(
@@ -230,17 +243,17 @@ fun ProductDetailScreen(
                                     Text(
                                         text = "Stock available",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
 
                                     Surface(
                                         shape = RoundedCornerShape(12.dp),
-                                        color = colorStock
+                                        color = stockContainerColor
                                     ) {
                                         Text(
-                                            text = if (ihasStock) "${product.stock} in stock"  else "Not in stock",
+                                            text = if (hasStock) "${product.stock} in stock"  else "Not in stock",
                                             style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onErrorContainer,
+                                            color = stockContentColor,
                                             fontWeight = FontWeight.Bold,
                                             modifier = Modifier.padding(
                                                 horizontal = 12.dp,

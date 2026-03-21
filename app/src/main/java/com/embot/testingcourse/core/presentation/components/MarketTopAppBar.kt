@@ -36,7 +36,7 @@ fun MarketTopAppBar(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back button",
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         },

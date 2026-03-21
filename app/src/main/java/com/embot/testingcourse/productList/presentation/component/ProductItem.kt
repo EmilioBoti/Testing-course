@@ -104,7 +104,7 @@ fun ProductItem(
                         Text(
                             text = promoBadge,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onError,
                             fontWeight = FontWeight.Bold
                         )
                     }
