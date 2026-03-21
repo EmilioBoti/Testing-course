@@ -1,10 +1,6 @@
 package com.embot.testingcourse.productList.presentation
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.embot.testingcourse.cart.presentation.CartUiState
+import com.embot.testingcourse.cart.presentation.CartViewModel
 import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
 import com.embot.testingcourse.productList.presentation.component.FilterMenu
 import com.embot.testingcourse.productList.presentation.component.HomeTopAppBar
@@ -38,12 +36,15 @@ import com.embot.testingcourse.productList.presentation.component.ProductItem
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
     navigatoToSettings: () -> Unit,
     navigatoToCart: () -> Unit,
     navigatoToProductDetail: (String) -> Unit,
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val filterVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
+    val cartUistate by cartViewModel.uiState.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
@@ -54,10 +55,19 @@ fun ProductListScreen(
         }
     }
 
+
+    val cartItemCount = remember(cartUistate) {
+        when(val state = cartUistate) {
+            is CartUiState.Success -> state.cartItems.sumOf { it.cartItem.quantity }
+            else -> 0
+        }
+    }
+
     Scaffold(
         topBar = {
             HomeTopAppBar(
                 filterVisible = filterVisible,
+                cartItemCount = cartItemCount,
                 onFilterClick = { showFilter -> productListViewModel.setFilterVisible(showFilter) },
                 onShoppingCartClick = navigatoToCart,
                 onSettingsClick = navigatoToSettings
