@@ -1,4 +1,4 @@
-package com.embot.testingcourse.cart.repository
+package com.embot.testingcourse.cart.data.local.repository
 
 import com.embot.testingcourse.cart.data.local.mapper.toDomain
 import com.embot.testingcourse.cart.data.local.mapper.toEntity

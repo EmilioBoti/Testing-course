@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.embot.testingcourse.cart.data.local.db.dao.CartItemDao
+import com.embot.testingcourse.cart.data.local.repository.CartItemRepositoryImpl
+import com.embot.testingcourse.cart.domain.repository.CartItemRepository
 import com.embot.testingcourse.core.data.coroutine.DefaultDispatcherProvider
 import com.embot.testingcourse.core.domain.coroutines.DispatcherProvider
 import com.embot.testingcourse.core.data.local.db.MiniMarketDatabase
@@ -54,6 +56,12 @@ object DataModule {
     @Singleton
     fun provideSettingsRepository(settingsRepository: SettingsRepositoryImpl): SettingsRepository {
         return settingsRepository
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartItemRepository(cartItemRepository: CartItemRepositoryImpl): CartItemRepository {
+        return cartItemRepository
     }
 
     @Provides
