@@ -39,6 +39,7 @@ import com.embot.testingcourse.productList.presentation.component.ProductItem
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
     navigatoToSettings: () -> Unit,
+    navigatoToCart: () -> Unit,
     navigatoToProductDetail: (String) -> Unit,
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
@@ -58,6 +59,7 @@ fun ProductListScreen(
             HomeTopAppBar(
                 filterVisible = filterVisible,
                 onFilterClick = { showFilter -> productListViewModel.setFilterVisible(showFilter) },
+                onShoppingCartClick = navigatoToCart,
                 onSettingsClick = navigatoToSettings
             )
          },

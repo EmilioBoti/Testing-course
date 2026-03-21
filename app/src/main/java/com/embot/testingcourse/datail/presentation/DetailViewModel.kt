@@ -2,6 +2,9 @@ package com.embot.testingcourse.datail.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.embot.testingcourse.cart.domain.repository.CartItemRepository
+import com.embot.testingcourse.cart.domain.usecase.AddToCartUserCase
+import com.embot.testingcourse.core.domain.model.AppError
 import com.embot.testingcourse.datail.domain.usecase.GetProductDetailWithPromotionUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
-    private val getProductDetailWithPromotionUserCase: GetProductDetailWithPromotionUserCase
+    private val getProductDetailWithPromotionUserCase: GetProductDetailWithPromotionUserCase,
+    private val addToCartUserCase: AddToCartUserCase
 ): ViewModel() {
 
     private val _uiState: MutableStateFlow<ProductDetailUistate> = MutableStateFlow(ProductDetailUistate())
@@ -45,17 +49,38 @@ class ProductDetailViewModel @Inject constructor(
             }
             .catch { error: Throwable ->
                 _uiState.update { _uiState.value.copy(isLoading = false) }
-                _events.emit(ProductDetailEvent.ShowError(error.message.orEmpty()))
+                if (error is AppError) {
+                    handleError(error)
+                } else {
+                    handleError(AppError.UnKnownError(error.message))
+                }
             }
             .launchIn(viewModelScope)
     }
 
     fun addToCart() {
+        val productId = _uiState.value.item?.product?.id ?: return
         viewModelScope.launch {
-            _uiState.value.item?.product?.let {
-
+            try {
+                addToCartUserCase(productId)
+            } catch (e: AppError) {
+                handleError(e)
+            } catch (e: Exception) {
+                handleError(AppError.UnKnownError(e.message))
             }
         }
+    }
+
+    private suspend fun handleError(e: AppError) {
+        val newEvent = when(e) {
+            AppError.DatabaseError,
+            AppError.NotFoundError,
+            AppError.Validation.QuantityMustBePositive,
+            is AppError.UnKnownError -> ProductDetailEvent.UNKNOWN_ERROR
+            AppError.NetworkError -> ProductDetailEvent.NETWORK_ERROR
+            is AppError.Validation.InsufficientStock -> ProductDetailEvent.INSUFICIENT_STOCK_ERROR
+        }
+        _events.emit(newEvent)
     }
 
 

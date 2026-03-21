@@ -10,5 +10,6 @@ sealed class CartUiState {
         val isLoading: Boolean
     ): CartUiState()
 
+    data class Error(val message: String): CartUiState()
     data object Loading: CartUiState()
 }

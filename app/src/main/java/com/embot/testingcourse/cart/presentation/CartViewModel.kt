@@ -33,20 +33,20 @@ class CartViewModel @Inject constructor(
     private val updateCartItemUseCase: UpdateCartItemUseCase
 ) : ViewModel() {
 
-    private val _uistate: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState.Loading)
-    val uistate: StateFlow<CartUiState> = _uistate.asStateFlow()
+    private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState.Loading)
+    val uiState: StateFlow<CartUiState> = _uiState.asStateFlow()
 
     private val _events: MutableSharedFlow<CartEvent> = MutableSharedFlow(extraBufferCapacity = 1)
     val events: SharedFlow<CartEvent> = _events
 
-    var cartJob: Job? = null
+    private var cartJob: Job? = null
 
     init {
         loadCart()
     }
 
-    private fun loadCart() {
-        _uistate.update { CartUiState.Loading }
+    fun loadCart() {
+        _uiState.update { CartUiState.Loading }
         cartJob?.cancel()
 
         cartJob = cartItemRepository.getCartItems()
@@ -54,7 +54,7 @@ class CartViewModel @Inject constructor(
                 val ids = cartItems.mapTo(mutableSetOf()) { it.productId }
                 if (ids.isEmpty()) {
                     getCartSummaryUseCase().map { summary ->
-                        _uistate.update {
+                        _uiState.update {
                             CartUiState.Success(
                                 summary = summary,
                                 cartItems = emptyList(),
@@ -75,7 +75,7 @@ class CartViewModel @Inject constructor(
                                 cartItem = cartItem
                             )
                         }
-                        _uistate.update {
+                        _uiState.update {
                             CartUiState.Success(
                                 summary = summary,
                                 cartItems = cartItemsWithRpoducts,
@@ -85,7 +85,7 @@ class CartViewModel @Inject constructor(
                     }
                 }
             }.catch { e: Throwable ->
-                _events.emit(CartEvent.ShowMessage(e.message.orEmpty()))
+                _uiState.update { CartUiState.Error(e.message.orEmpty()) }
             }.launchIn(viewModelScope)
     }
 
