@@ -14,21 +14,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +45,7 @@ import coil3.compose.AsyncImage
 import com.embot.testingcourse.cart.presentation.model.CartItemWithPromotion
 import com.embot.testingcourse.core.presentation.components.MarketTopAppBar
 import com.embot.testingcourse.core.presentation.components.QuantitySelector
+import com.embot.testingcourse.productList.domain.model.ProductPromotion
 import java.text.NumberFormat
 import java.util.Currency
 
@@ -73,12 +81,14 @@ fun CartScreen(
                     error = state,
                     onRetryClick = { cartViewModel.loadCart() }
                 )
+
                 is CartUiState.Success -> {
                     CartContentScreen(
                         modifier = modifier,
-                        state =  state,
+                        state = state,
                         onDecreaseQuantity = cartViewModel::decreaseQuantity,
-                        onIncreaseQuantity = cartViewModel::increaseQuantity
+                        onIncreaseQuantity = cartViewModel::increaseQuantity,
+                        onRemove = cartViewModel::removeFromCart
                     )
                 }
             }
@@ -93,6 +103,7 @@ fun CartContentScreen(
     state: CartUiState.Success,
     onDecreaseQuantity: (String, Int) -> Unit,
     onIncreaseQuantity: (String, Int) -> Unit,
+    onRemove: (String) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -120,14 +131,15 @@ fun CartContentScreen(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
             ) {
-                items(state.cartItems) { itemWithProduct ->
+                items(state.cartItems, key = { it.cartItem.productId }) { itemWithProduct ->
                     CartItemCard(
                         itemWithProduct = itemWithProduct,
                         onIncreaseQuantity = onIncreaseQuantity,
                         onDecreaseQuantity = onDecreaseQuantity,
-                        onRemove = { }
+                        onRemove = onRemove
                     )
                 }
             }
@@ -140,9 +152,10 @@ fun CartItemCard(
     itemWithProduct: CartItemWithPromotion,
     onDecreaseQuantity: (String, Int) -> Unit,
     onIncreaseQuantity: (String, Int) -> Unit,
-    onRemove: () -> Unit
+    onRemove: (String) -> Unit
 ) {
-    val product = itemWithProduct.product
+    val product = itemWithProduct.item.product
+    val promotion = itemWithProduct.item.promotion
     val cartItem = itemWithProduct.cartItem
 
     val currencyFormatter = remember {
@@ -151,56 +164,96 @@ fun CartItemCard(
         }
     }
 
-    Card(
-        modifier = Modifier.fillMaxWidth()
-            .padding(2.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        ),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            AsyncImage(
-                modifier = Modifier.weight(1f),
-                model = product.imageUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
-            Column(
-                modifier = Modifier.weight(3f)
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
+    val unitPrice = when (promotion) {
+        is ProductPromotion.BuyXPayY -> product.price
+        is ProductPromotion.Percent -> promotion.discountPrice
+        null -> product.price
+    }
+
+    val hasDiscount = promotion is ProductPromotion.Percent
+    val itemTotal = unitPrice * cartItem.quantity
+
+    val dismissState = rememberSwipeToDismissBoxState()
+
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+            onRemove(cartItem.productId)
+            dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+        }
+    }
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromEndToStart = false,
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(16.dp))
+                    .background(color = MaterialTheme.colorScheme.error),
+                contentAlignment = Alignment.CenterStart,
             ) {
-                Text(
-                    text = product.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                // PROMO
-                Text(
-                    text = "Total: ${currencyFormatter.format(product.price)}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                QuantitySelector(
-                    modifier = Modifier.background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                    quantity = cartItem.quantity.toString(),
-                    canDecrease = cartItem.quantity > 1,
-                    canIncrease = cartItem.quantity < product.stock,
-                    onDecreaseClick = { onDecreaseQuantity(product.id, cartItem.quantity) },
-                    onIncreaseClick = { onIncreaseQuantity(product.id, cartItem.quantity) }
+                Icon(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = "Delete Item from Cart",
+                    tint = MaterialTheme.colorScheme.surface
                 )
             }
         }
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 2.dp
+            ),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                AsyncImage(
+                    modifier = Modifier.weight(1f),
+                    model = product.imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+                Column(
+                    modifier = Modifier
+                        .weight(2f)
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                ) {
+                    Text(
+                        text = product.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    // PROMO
+                    Text(
+                        text = "Total: ${currencyFormatter.format(product.price)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    QuantitySelector(
+                        modifier = Modifier.background(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(8.dp)
+                        ),
+                        quantity = cartItem.quantity.toString(),
+                        canDecrease = cartItem.quantity > 1,
+                        canIncrease = cartItem.quantity < product.stock,
+                        onDecreaseClick = { onDecreaseQuantity(product.id, cartItem.quantity) },
+                        onIncreaseClick = { onIncreaseQuantity(product.id, cartItem.quantity) }
+                    )
+                }
+            }
+        }
+
     }
 
 }

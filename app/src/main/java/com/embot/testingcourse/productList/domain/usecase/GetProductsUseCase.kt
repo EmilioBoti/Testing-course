@@ -1,5 +1,6 @@
 package com.embot.testingcourse.productList.domain.usecase
 
+import com.embot.testingcourse.cart.domain.extensions.activeAt
 import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
 import com.embot.testingcourse.productList.domain.repository.PromotionRepository
@@ -24,9 +25,7 @@ class GetProductsUseCase @Inject constructor(
         ) { products, promotions, inStockOnly ->
             val now = Instant.now()
 
-            val activePromotions = promotions.filter {
-                it.startTime <= now && it.endTime >= now
-            }
+            val activePromotions = promotions.activeAt(now)
 
             val filteredProduct = if (inStockOnly) {
                 products.filter { product -> product.stock >= 0 }
