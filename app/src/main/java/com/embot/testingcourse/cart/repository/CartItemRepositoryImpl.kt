@@ -19,6 +19,10 @@ class CartItemRepositoryImpl @Inject constructor(
             .map { entities -> entities.map { it.toDomain() } }
     }
 
+    override suspend fun getCartItemById(productId: String): CartItem? {
+        return localDataSource.getCartItemById(productId)?.toDomain()
+    }
+
     override suspend fun addToCart(productId: String, quantity: Int) {
         val existingItem = localDataSource.getCartItemById(productId)
 
