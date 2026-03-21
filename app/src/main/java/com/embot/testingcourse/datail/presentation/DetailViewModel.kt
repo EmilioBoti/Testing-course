@@ -2,7 +2,6 @@ package com.embot.testingcourse.datail.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.embot.testingcourse.cart.domain.repository.CartItemRepository
 import com.embot.testingcourse.cart.domain.usecase.AddToCartUserCase
 import com.embot.testingcourse.core.domain.model.AppError
 import com.embot.testingcourse.datail.domain.usecase.GetProductDetailWithPromotionUserCase
@@ -63,6 +62,7 @@ class ProductDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 addToCartUserCase(productId)
+                _events.emit(ProductDetailEvent.SuccessAddToCart)
             } catch (e: AppError) {
                 handleError(e)
             } catch (e: Exception) {
@@ -76,9 +76,9 @@ class ProductDetailViewModel @Inject constructor(
             AppError.DatabaseError,
             AppError.NotFoundError,
             AppError.Validation.QuantityMustBePositive,
-            is AppError.UnKnownError -> ProductDetailEvent.UNKNOWN_ERROR
-            AppError.NetworkError -> ProductDetailEvent.NETWORK_ERROR
-            is AppError.Validation.InsufficientStock -> ProductDetailEvent.INSUFICIENT_STOCK_ERROR
+            is AppError.UnKnownError -> ProductDetailEvent.UnknownError
+            AppError.NetworkError -> ProductDetailEvent.NetworkError
+            is AppError.Validation.InsufficientStock -> ProductDetailEvent.InsuficientStockError
         }
         _events.emit(newEvent)
     }

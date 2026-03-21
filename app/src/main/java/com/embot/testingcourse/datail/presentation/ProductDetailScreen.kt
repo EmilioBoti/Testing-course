@@ -53,9 +53,10 @@ fun ProductDetailScreen(
     LaunchedEffect(Unit) {
         productDetailViewModel.events.collect { event ->
             when(event) {
-                ProductDetailEvent.INSUFICIENT_STOCK_ERROR -> snackbarHostState.showSnackbar("There is not enough stock available")
-                ProductDetailEvent.NETWORK_ERROR -> snackbarHostState.showSnackbar("Network error, check your connection.")
-                ProductDetailEvent.UNKNOWN_ERROR -> snackbarHostState.showSnackbar("Unexpected error, try again.")
+                ProductDetailEvent.InsuficientStockError -> snackbarHostState.showSnackbar("There is not enough stock available")
+                ProductDetailEvent.NetworkError -> snackbarHostState.showSnackbar("Network error, check your connection.")
+                ProductDetailEvent.UnknownError -> snackbarHostState.showSnackbar("Unexpected error, try again.")
+                else -> snackbarHostState.showSnackbar("Product added.")
             }
         }
     }

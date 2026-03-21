@@ -63,14 +63,10 @@ fun CartScreen(
         topBar = { MarketTopAppBar(title = "Cart", onBackClick = onBack) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            val modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+        val modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+        Column(modifier = modifier) {
             when (val state = uiState) {
                 CartUiState.Loading -> CartLoadingStateScreen(Modifier.fillMaxSize())
                 is CartUiState.Error -> CartErroStateScreen(
