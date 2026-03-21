@@ -5,9 +5,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.embot.testingcourse.cart.data.local.db.dao.CartItemDao
 import com.embot.testingcourse.core.data.coroutine.DefaultDispatcherProvider
 import com.embot.testingcourse.core.domain.coroutines.DispatcherProvider
-import com.embot.testingcourse.productList.data.local.db.MiniMarketDatabase
+import com.embot.testingcourse.core.data.local.db.MiniMarketDatabase
 import com.embot.testingcourse.productList.data.local.db.dao.ProductDao
 import com.embot.testingcourse.productList.data.local.db.dao.PromotionDao
 import com.embot.testingcourse.productList.data.repository.ProductRepositoryImpl
@@ -70,6 +71,9 @@ object DataModule {
 
     @Provides
     fun providePromotionDao(database: MiniMarketDatabase): PromotionDao = database.promotionDao()
+
+    @Provides
+    fun provideCartItemDao(database: MiniMarketDatabase): CartItemDao = database.cartItemDao()
 
     @Provides
     @Singleton
