@@ -4,6 +4,7 @@ import com.embot.testingcourse.core.builders.product
 import com.embot.testingcourse.core.domain.model.AppError
 import com.embot.testingcourse.core.fakes.FakeCartItemRepository
 import com.embot.testingcourse.core.fakes.FakeProductRepository
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Test
@@ -82,6 +83,55 @@ class AddToCartUserCaseTest {
         // THEN
         assertTrue(exception is AppError.Validation.InsufficientStock)
         assertEquals(2, (exception as AppError.Validation.InsufficientStock).available)
+    }
+
+    @Test
+    fun successful_case_adds_item_to_cart() = runTest {
+        // GIVEN
+        val productId = "id_test_1"
+        val product = product {
+            withId(productId)
+            withStock(10)
+        }
+        val fakeCartItemRepository = FakeCartItemRepository()
+        val fakeProductRepository = FakeProductRepository().apply {
+            setProducts(listOf(product))
+        }
+        val useCase = AddToCartUserCase(
+            cartItemRepository = fakeCartItemRepository,
+            productRepository = fakeProductRepository
+        )
+        // WHEN
+        useCase(productId, 3)
+        // THEN
+        val items = fakeCartItemRepository.getCartItems().first()
+        assertEquals(productId, items.first().productId)
+        assertEquals(3, items.first().quantity)
+        assertEquals(1, items.size)
+    }
+
+    @Test
+    fun defatul_quantity_adds_one_item() = runTest {
+        // GIVEN
+        val productId = "id_test_1"
+        val product = product {
+            withId(productId)
+            withStock(10)
+        }
+        val fakeCartItemRepository = FakeCartItemRepository()
+        val fakeProductRepository = FakeProductRepository().apply {
+            setProducts(listOf(product))
+        }
+        val useCase = AddToCartUserCase(
+            cartItemRepository = fakeCartItemRepository,
+            productRepository = fakeProductRepository
+        )
+        // WHEN
+        useCase(productId)
+        // THEN
+        val items = fakeCartItemRepository.getCartItems().first()
+        assertEquals(1, items.size)
+        assertEquals(1, items.first().quantity)
     }
 
 }
