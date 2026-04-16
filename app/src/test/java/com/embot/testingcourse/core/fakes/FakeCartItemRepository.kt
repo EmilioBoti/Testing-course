@@ -3,6 +3,7 @@ package com.embot.testingcourse.core.fakes
 import com.embot.testingcourse.cart.domain.model.CartItem
 import com.embot.testingcourse.cart.domain.repository.CartItemRepository
 import com.embot.testingcourse.core.domain.model.AppError
+import com.embot.testingcourse.productList.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +14,10 @@ class FakeCartItemRepository: CartItemRepository {
     private val _cartItems: MutableStateFlow<List<CartItem>> = MutableStateFlow(emptyList())
 
     override fun getCartItems(): Flow<List<CartItem>> = _cartItems.asStateFlow()
+
+    fun setCartItem(cartItems: List<CartItem>) {
+        _cartItems.value = cartItems
+    }
 
     override suspend fun getCartItemById(productId: String): CartItem? {
         return _cartItems.value.find { item ->  item.productId == productId }

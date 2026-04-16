@@ -3,7 +3,9 @@ package com.embot.testingcourse.cart.domain.usecase
 import com.embot.testingcourse.cart.domain.repository.CartItemRepository
 import com.embot.testingcourse.core.domain.model.AppError
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class UpdateCartItemUseCase @Inject constructor(
@@ -21,7 +23,7 @@ class UpdateCartItemUseCase @Inject constructor(
             return
         }
 
-        val product = productRepository.getProductById(productId).first()
+        val product = productRepository.getProductById(productId).firstOrNull()
             ?: throw AppError.NotFoundError
 
         if (quantity > product.stock) {
