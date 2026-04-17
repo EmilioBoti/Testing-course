@@ -8,9 +8,11 @@ import androidx.room.Room
 import com.embot.testingcourse.cart.data.local.db.dao.CartItemDao
 import com.embot.testingcourse.cart.data.local.repository.CartItemRepositoryImpl
 import com.embot.testingcourse.cart.domain.repository.CartItemRepository
+import com.embot.testingcourse.core.data.SystemClock
 import com.embot.testingcourse.core.data.coroutine.DefaultDispatcherProvider
 import com.embot.testingcourse.core.domain.coroutines.DispatcherProvider
 import com.embot.testingcourse.core.data.local.db.MiniMarketDatabase
+import com.embot.testingcourse.core.domain.utils.Clock
 import com.embot.testingcourse.productList.data.local.db.dao.ProductDao
 import com.embot.testingcourse.productList.data.local.db.dao.PromotionDao
 import com.embot.testingcourse.productList.data.repository.ProductRepositoryImpl
@@ -31,6 +33,10 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("s
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+
+    @Provides
+    @Singleton
+    fun provideSystemClock(clock: SystemClock): Clock =  clock
 
     @Provides
     @Singleton
