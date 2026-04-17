@@ -8,7 +8,7 @@ class CartItemBuilder {
     private var quantity: Int = 1
 
 
-    fun withId(id: String) = this.apply { this.productId = id }
+    fun withProductId(id: String) = this.apply { this.productId = id }
     fun withQuantity(quantity: Int) = this.apply { this.quantity = quantity }
 
     fun build() = CartItem(

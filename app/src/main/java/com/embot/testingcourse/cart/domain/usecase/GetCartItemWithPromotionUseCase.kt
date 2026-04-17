@@ -3,6 +3,7 @@ package com.embot.testingcourse.cart.domain.usecase
 import com.embot.testingcourse.cart.domain.extensions.activeAt
 import com.embot.testingcourse.cart.domain.repository.CartItemRepository
 import com.embot.testingcourse.cart.presentation.model.CartItemWithPromotion
+import com.embot.testingcourse.core.domain.utils.Clock
 import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
 import com.embot.testingcourse.productList.domain.repository.PromotionRepository
@@ -21,7 +22,8 @@ class GetCartItemWithPromotionUseCase @Inject constructor(
     private val cartItemRepository: CartItemRepository,
     private val productRepository: ProductRepository,
     private val promotionRepository: PromotionRepository,
-    private val getPromotionForProduct: GetPromotionForProduct
+    private val getPromotionForProduct: GetPromotionForProduct,
+    private val clock: Clock
 ) {
 
     operator fun invoke(): Flow<List<CartItemWithPromotion>> {
@@ -36,7 +38,7 @@ class GetCartItemWithPromotionUseCase @Inject constructor(
                         productRepository.getProductsByIds(ids),
                         promotionRepository.getActivePromotions()
                     ) { products, promotions ->
-                        val now = Instant.now()
+                        val now = clock.now()
 
                         val activePromotions = promotions.activeAt(now)
                         val productsById = products.associateBy { it.id }
