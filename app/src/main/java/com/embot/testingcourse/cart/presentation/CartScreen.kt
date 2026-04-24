@@ -87,7 +87,7 @@ fun CartScreen(
                 is CartUiState.Error -> CartErroStateScreen(
                     modifier = Modifier.fillMaxSize(),
                     error = state,
-                    onRetryClick = { cartViewModel.loadCart() }
+                    onRetryClick = { cartViewModel.refresh() }
                 )
 
                 is CartUiState.Success -> {
