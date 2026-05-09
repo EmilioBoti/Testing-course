@@ -57,8 +57,8 @@ class ProductDetailViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun addToCart() {
-        val productId = _uiState.value.item?.product?.id ?: return
+    fun addToCart(id: String?) {
+        val productId = id ?: return
         viewModelScope.launch {
             try {
                 addToCartUserCase(productId)
