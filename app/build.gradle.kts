@@ -54,6 +54,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.app.turbine)
+    androidTestImplementation(libs.app.turbine)
 
     // COMPOSE
     implementation(libs.androidx.activity.compose)
