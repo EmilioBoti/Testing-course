@@ -21,7 +21,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.embot.testingcourse.HiltTestRunner"
     }
 
     buildTypes {
@@ -57,6 +57,7 @@ dependencies {
     androidTestImplementation(libs.app.turbine)
     androidTestImplementation(libs.mockwebserver)
     testImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.hilt.android.testing)
 
     // COMPOSE
     implementation(libs.androidx.activity.compose)
