@@ -1,6 +1,6 @@
-package com.embot.testingcourse.core.builders.mockwebserver.rules
+package com.embot.testingcourse.core.mockwebserver.rules
 
-import com.embot.testingcourse.core.builders.mockwebserver.MockWebServerUrlHolder
+import com.embot.testingcourse.core.mockwebserver.MockWebServerUrlHolder
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
