@@ -55,6 +55,8 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.app.turbine)
     androidTestImplementation(libs.app.turbine)
+    androidTestImplementation(libs.mockwebserver)
+    testImplementation(libs.mockwebserver)
 
     // COMPOSE
     implementation(libs.androidx.activity.compose)
