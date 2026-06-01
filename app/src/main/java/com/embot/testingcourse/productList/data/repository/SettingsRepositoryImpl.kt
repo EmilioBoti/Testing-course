@@ -1,5 +1,6 @@
 package com.embot.testingcourse.productList.data.repository
 
+import androidx.annotation.VisibleForTesting
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
@@ -97,4 +98,10 @@ class SettingsRepositoryImpl @Inject constructor(
             preferences[SORT_OPTION_KEY] = value.name
         }
     }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    suspend fun clear() {
+        dataStore.edit { it.clear() }
+    }
+
 }

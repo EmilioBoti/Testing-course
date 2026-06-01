@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.embot.testingcourse.cart.data.local.db.dao.CartItemDao
@@ -97,6 +98,7 @@ object TestDataModule {
     @Singleton
     fun provideDataStore(): DataStore<Preferences> {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        context.preferencesDataStoreFile("testing_settings").delete()
         return context.testingDataStore
     }
 
