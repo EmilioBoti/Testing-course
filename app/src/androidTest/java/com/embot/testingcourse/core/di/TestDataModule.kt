@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.core.internal.deps.dagger.Module
 import com.embot.testingcourse.cart.data.local.db.dao.CartItemDao
 import com.embot.testingcourse.cart.data.local.repository.CartItemRepositoryImpl
 import com.embot.testingcourse.cart.domain.repository.CartItemRepository
@@ -24,6 +23,7 @@ import com.embot.testingcourse.productList.data.repository.SettingsRepositoryImp
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
 import com.embot.testingcourse.productList.domain.repository.PromotionRepository
 import com.embot.testingcourse.productList.domain.repository.SettingsRepository
+import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn

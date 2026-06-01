@@ -1,9 +1,9 @@
 package com.embot.testingcourse.core.di
 
-import androidx.test.espresso.core.internal.deps.dagger.Module
 import com.embot.testingcourse.core.mockwebserver.MockWebServerUrlHolder
 import com.embot.testingcourse.di.NetworkModule
 import com.embot.testingcourse.productList.data.remote.MiniMarketApiService
+import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
