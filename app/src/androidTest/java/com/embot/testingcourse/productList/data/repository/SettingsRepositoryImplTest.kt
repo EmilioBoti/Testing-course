@@ -3,14 +3,12 @@ package com.embot.testingcourse.productList.data.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.embot.testingcourse.core.domain.model.ThemeMode
 import com.embot.testingcourse.core.mockwebserver.MockWebServerUrlHolder
-import com.embot.testingcourse.core.mockwebserver.rules.MockWebServerRule
 import com.embot.testingcourse.productList.domain.model.SortOption
 import com.embot.testingcourse.productList.domain.repository.SettingsRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -22,10 +20,7 @@ import javax.inject.Inject
 @RunWith(AndroidJUnit4::class)
 class SettingsRepositoryImplTest {
 
-    @get:Rule(order = 0)
-    val mockWebserver: MockWebServerRule = MockWebServerRule()
-
-    @get:Rule(order = 1)
+    @get:Rule
     val hilt: HiltAndroidRule = HiltAndroidRule(this)
 
     @Inject
@@ -36,11 +31,6 @@ class SettingsRepositoryImplTest {
     fun setUp() = runTest {
         hilt.inject()
         (settingsRepository as? SettingsRepositoryImpl)?.clear()
-    }
-
-    @After
-    fun tearDown() {
-        MockWebServerUrlHolder.baseUrl = "http:://localhost:8080/"
     }
 
     @Test
