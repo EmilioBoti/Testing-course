@@ -1,0 +1,28 @@
+{
+  "products": [
+    {
+      "id": "p1",
+      "name": "Leche Entera 1L",
+      "category": "Dairy",
+      "priceCents": 120,
+      "stock": 0,
+      "imageUrl": "https://images.unsplash.com/photo-1580910051074-3eb694886505"
+    },
+    {
+      "id": "p2",
+      "name": "Huevos Camperos (12u)",
+      "category": "Dairy",
+      "priceCents": 310,
+      "stock": 8,
+      "imageUrl": "https://images.unsplash.com/photo-1587486913049-53fc88980cfc"
+    },
+    {
+      "id": "p3",
+      "name": "Pan Integral",
+      "category": "Bakery",
+      "priceCents": 180,
+      "stock": 0,
+      "imageUrl": "https://images.unsplash.com/photo-1509440159596-0249088772ff"
+    }
+  ]
+}

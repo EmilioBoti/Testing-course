@@ -14,6 +14,7 @@ import com.embot.testingcourse.productList.domain.model.SortOption
 import com.embot.testingcourse.productList.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -102,6 +103,7 @@ class SettingsRepositoryImpl @Inject constructor(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun clear() {
         dataStore.edit { it.clear() }
+        dataStore.data.first { it.asMap().isEmpty() }
     }
 
 }
