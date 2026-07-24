@@ -6,7 +6,7 @@ import okhttp3.mockwebserver.RecordedRequest
 
 class MiniMarketApiDispatcher(
     private val productJson: String,
-    private val promoJson: String = """{ "promotion": [] }""",
+    private val promoJson: String = """{ "promotions": [] }""",
 ): Dispatcher() {
 
     override fun dispatch(request: RecordedRequest): MockResponse {
