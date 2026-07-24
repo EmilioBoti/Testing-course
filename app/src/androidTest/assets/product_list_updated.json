@@ -1,0 +1,12 @@
+{
+  "products": [
+    {
+      "id": "updated-p1",
+      "name": "Pan integral",
+      "category": "Comida",
+      "priceCents": 450,
+      "stock": 10,
+      "imageUrl": "https://images.unsplash.com/photo-1580910051074-3eb694886505"
+    }
+  ]
+}

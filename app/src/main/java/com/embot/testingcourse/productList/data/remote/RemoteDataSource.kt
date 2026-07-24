@@ -39,6 +39,7 @@ class RemoteDataSource @Inject constructor(
             is HttpException -> {
                 when(e.code()) {
                     404 -> AppError.NotFoundError
+                    500 -> AppError.NetworkError
                     else -> AppError.UnKnownError(e.message)
                 }
             }

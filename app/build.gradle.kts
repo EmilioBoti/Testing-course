@@ -58,6 +58,7 @@ dependencies {
     androidTestImplementation(libs.mockwebserver)
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.kotlin.test)
 
     // COMPOSE
     implementation(libs.androidx.activity.compose)

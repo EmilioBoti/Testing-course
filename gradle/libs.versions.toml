@@ -45,6 +45,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 app-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbineVersion" }
 mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockwebserver" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 
 # COMPOSE
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
