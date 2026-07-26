@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">TestingCourse</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_filters_section">Filter and visualization</string>
+    <string name="settings_filter_include_taxes_label">Show includes taxes</string>
+    <string name="settings_filter_include_taxes_text">Include taxes of shown prices</string>
+    <string name="settings_in_stock_only">Only product in stock</string>
+    <string name="settings_in_stock_only_text">Show only available products</string>
+    <string name="settings_appearance_section">Appearances</string>
+    <string name="settings_theme_label">Application Theme</string>
+    <string name="settings_theme_text">select between mode dark, light or system</string>
+    <string name="theme_system_mode">System</string>
+    <string name="theme_dark_mode">Dark</string>
+    <string name="theme_light_mode">Light</string>
 </resources>
