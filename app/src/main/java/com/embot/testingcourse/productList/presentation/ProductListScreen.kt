@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.embot.testingcourse.cart.presentation.CartUiState
 import com.embot.testingcourse.cart.presentation.CartViewModel
 import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
+import com.embot.testingcourse.productList.domain.model.SortOption
 import com.embot.testingcourse.productList.presentation.component.FilterMenu
 import com.embot.testingcourse.productList.presentation.component.HomeTopAppBar
 import com.embot.testingcourse.productList.presentation.component.ProductItem
@@ -36,48 +37,77 @@ import com.embot.testingcourse.productList.presentation.component.ProductItem
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel(),
-    navigatoToSettings: () -> Unit,
-    navigatoToCart: () -> Unit,
-    navigatoToProductDetail: (String) -> Unit,
+    navigateToSettings: () -> Unit,
+    navigateToCart: () -> Unit,
+    navigateToProductDetail: (String) -> Unit,
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val filterVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
-    val cartUistate by cartViewModel.uiState.collectAsStateWithLifecycle()
+    val cartUiState by cartViewModel.uiState.collectAsStateWithLifecycle()
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         productListViewModel.events.collect { event ->
             when(event) {
-                is ProductListEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
+                is ProductListEvent.ShowMessage -> snackBarHostState.showSnackbar(event.message)
             }
         }
     }
 
 
-    val cartItemCount = remember(cartUistate) {
-        when(val state = cartUistate) {
+    val cartItemCount = remember(cartUiState) {
+        when(val state = cartUiState) {
             is CartUiState.Success -> state.cartItems.sumOf { it.cartItem.quantity }
             else -> 0
         }
     }
 
+    ProductListContent(
+        snackBarHostState = snackBarHostState,
+        uiState = uiState,
+        filterVisible = filterVisible,
+        cartItemCount = cartItemCount,
+        onFilterClick = productListViewModel::setFilterVisible,
+        onCategorySelected = productListViewModel::setCategory,
+        onSortSelected = productListViewModel::setSortOption,
+        navigateToSettings = navigateToSettings,
+        navigateToCart = navigateToCart,
+        navigateToProductDetail = navigateToProductDetail,
+    )
+
+}
+
+@Composable
+fun ProductListContent(
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    uiState: ProductListUiState,
+    cartItemCount: Int,
+    filterVisible: Boolean,
+    onFilterClick: (Boolean) -> Unit = {},
+    onCategorySelected: (String?) -> Unit = {},
+    onSortSelected: (SortOption) -> Unit = {},
+    navigateToSettings: () -> Unit = {},
+    navigateToCart: () -> Unit = {},
+    navigateToProductDetail: (String) -> Unit = {},
+) {
     Scaffold(
         topBar = {
             HomeTopAppBar(
                 filterVisible = filterVisible,
                 cartItemCount = cartItemCount,
-                onFilterClick = { showFilter -> productListViewModel.setFilterVisible(showFilter) },
-                onShoppingCartClick = navigatoToCart,
-                onSettingsClick = navigatoToSettings
+                onFilterClick = onFilterClick,
+                onShoppingCartClick = navigateToCart,
+                onSettingsClick = navigateToSettings
             )
-         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { paddingValues ->
-        when(val state = uiState) {
+        when(uiState) {
             ProductListUiState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
@@ -86,7 +116,8 @@ fun ProductListScreen(
             }
             is ProductListUiState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(paddingValues),
                 ) {
                     Text(
@@ -98,20 +129,21 @@ fun ProductListScreen(
             }
             is ProductListUiState.Success -> {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(paddingValues)
                 ) {
                     AnimatedVisibility(
                         visible = filterVisible
                     ) {
                         FilterMenu(
-                            state = state,
-                            onCategorySelected = { category -> productListViewModel.setCategory(category) },
-                            onSortSelected = { sortOption -> productListViewModel.setSortOption(sortOption) }
+                            state = uiState,
+                            onCategorySelected = onCategorySelected,
+                            onSortSelected = onSortSelected
                         )
                     }
                     Text(
-                        text = "${state.productList.size} products",
+                        text = "${uiState.productList.size} products",
                         modifier = Modifier.padding(
                             horizontal = 16.dp,
                             vertical = 4.dp
@@ -119,9 +151,11 @@ fun ProductListScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.secondary
                     )
-                    if (state.productList.isEmpty()) {
+                    if (uiState.productList.isEmpty()) {
                         Box(
-                            modifier = Modifier.fillMaxSize().padding(32.dp),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(32.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(
@@ -141,10 +175,10 @@ fun ProductListScreen(
                         }
                     } else {
                         LazyColumn {
-                            items(state.productList) { item: ProductWithPromotion ->
+                            items(uiState.productList) { item: ProductWithPromotion ->
                                 ProductItem(
                                     item = item,
-                                    onClick = { item -> navigatoToProductDetail(item.product.id) }
+                                    onClick = { item -> navigateToProductDetail(item.product.id) }
                                 )
                             }
                         }
@@ -158,5 +192,16 @@ fun ProductListScreen(
 @Preview(showBackground = true)
 @Composable
 fun ProductListScreenPreview() {
-//    ProductListScreen("") {}
+    val snackBarHostState = remember { SnackbarHostState() }
+    ProductListContent(
+        snackBarHostState = snackBarHostState,
+        uiState = ProductListUiState.Success(
+            productList = emptyList(),
+            categories = emptyList(),
+            selectedCategory = null,
+            sortOption = SortOption.PRICE_ASC
+        ),
+        cartItemCount = 4,
+        filterVisible = false,
+    )
 }
