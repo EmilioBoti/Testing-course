@@ -2,6 +2,8 @@ package com.embot.testingcourse.productList.presentation
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -10,6 +12,7 @@ import com.embot.testingcourse.core.mothers.uistate.ProductListUiStateMother
 import com.embot.testingcourse.core.testing.UiTestTag
 import com.embot.testingcourse.core.testing.UiTestTag.FILTER_VIEW
 import com.embot.testingcourse.core.testing.UiTestTag.PRODUCT_LIST_LOADING
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_BADGE
 import com.embot.testingcourse.productList.domain.model.SortOption
 import org.junit.Rule
 import org.junit.Test
@@ -84,5 +87,34 @@ class ProductListScreenTest {
         composeRule.onNodeWithText("Products not found").assertIsDisplayed()
     }
 
+    @Test
+    fun givenNoCategorySelected_whenRendered_thenMarkAllChip() {
+        createProductListScreen(uiState = ProductListUiStateMother.success(selectedCategory = null))
+
+        composeRule.onNodeWithTag(UiTestTag.productListCategory(null)).assertIsSelected()
+    }
+
+    @Test
+    fun givenNoCategorySelected_whenRendered_thenMarkThatChip() {
+        createProductListScreen(uiState = ProductListUiStateMother.success(selectedCategory = "drinks"))
+
+        composeRule.onNodeWithTag(UiTestTag.productListCategory("drinks")).assertIsSelected()
+    }
+
+    @Test
+    fun givenCartItemCountPositive_whenRendered_thenBadgeWithCount() {
+        createProductListScreen(cartItemCount = 67)
+
+        composeRule.onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+        composeRule.onNodeWithText("67").assertIsDisplayed()
+    }
+
+    @Test
+    fun givenCartItemCountOver99_whenRendered_thenBadgeWithCount99Plus() {
+        createProductListScreen(cartItemCount = 350)
+
+        composeRule.onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+        composeRule.onNodeWithText("99+").assertIsDisplayed()
+    }
 
 }

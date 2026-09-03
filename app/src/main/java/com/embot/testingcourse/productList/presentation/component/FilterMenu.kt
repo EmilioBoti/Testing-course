@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.embot.testingcourse.core.testing.UiTestTag
 import com.embot.testingcourse.core.testing.UiTestTag.FILTER_VIEW
 import com.embot.testingcourse.productList.domain.model.SortOption
 import com.embot.testingcourse.productList.presentation.ProductListUiState
@@ -59,6 +60,7 @@ fun FilterMenu(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
+                    modifier = Modifier.testTag(UiTestTag.productListCategory(null)),
                     selected = state.selectedCategory == null,
                     onClick = { onCategorySelected(null) },
                     label = {
@@ -70,6 +72,7 @@ fun FilterMenu(
                 )
                 state.categories.forEach { category ->
                     FilterChip(
+                        modifier = Modifier.testTag(UiTestTag.productListCategory(category)),
                         selected = category.equals(state.selectedCategory, ignoreCase = true),
                         onClick = { onCategorySelected(category) },
                         label = {
