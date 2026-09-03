@@ -20,12 +20,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.embot.testingcourse.cart.presentation.CartUiState
 import com.embot.testingcourse.cart.presentation.CartViewModel
+import com.embot.testingcourse.core.testing.UiTestTag.PRODUCT_LIST_LIST
+import com.embot.testingcourse.core.testing.UiTestTag.PRODUCT_LIST_LOADING
 import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
 import com.embot.testingcourse.productList.domain.model.SortOption
 import com.embot.testingcourse.productList.presentation.component.FilterMenu
@@ -111,7 +114,7 @@ fun ProductListContent(
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(modifier = Modifier.testTag(PRODUCT_LIST_LOADING))
                 }
             }
             is ProductListUiState.Error -> {
@@ -174,7 +177,9 @@ fun ProductListContent(
                             }
                         }
                     } else {
-                        LazyColumn {
+                        LazyColumn(
+                            modifier = Modifier.testTag(PRODUCT_LIST_LIST)
+                        ) {
                             items(uiState.productList) { item: ProductWithPromotion ->
                                 ProductItem(
                                     item = item,

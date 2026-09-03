@@ -1,5 +1,6 @@
 package com.embot.testingcourse.core.mothers.uistate
 
+import com.embot.testingcourse.core.builders.product
 import com.embot.testingcourse.core.mothers.ProductMother
 import com.embot.testingcourse.core.mothers.PromotionMother
 import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
