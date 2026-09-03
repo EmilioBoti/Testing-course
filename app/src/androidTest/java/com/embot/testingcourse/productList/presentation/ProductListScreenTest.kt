@@ -3,19 +3,23 @@ package com.embot.testingcourse.productList.presentation
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.embot.testingcourse.core.mothers.ProductMother
 import com.embot.testingcourse.core.mothers.uistate.ProductListUiStateMother
 import com.embot.testingcourse.core.testing.UiTestTag
 import com.embot.testingcourse.core.testing.UiTestTag.FILTER_VIEW
 import com.embot.testingcourse.core.testing.UiTestTag.PRODUCT_LIST_LOADING
 import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_BADGE
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_BADGE_FILTER
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_CART
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_SETTINGS
 import com.embot.testingcourse.productList.domain.model.SortOption
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class ProductListScreenTest {
 
@@ -115,6 +119,50 @@ class ProductListScreenTest {
 
         composeRule.onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
         composeRule.onNodeWithText("99+").assertIsDisplayed()
+    }
+
+    @Test
+    fun givenFilterVisible_whenToggleClicked_thenEmitFalse() {
+        var emitted: Boolean? = null
+
+        createProductListScreen(filterVisible = true, onFilterClick = { value -> emitted = value})
+
+        composeRule.onNodeWithTag(TOP_APP_BAR_BADGE_FILTER).performClick()
+
+        assertEquals(emitted, false)
+    }
+
+    @Test
+    fun givenFilterHidden_whenToggleClicked_thenEmitTrue() {
+        var emitted: Boolean? = null
+
+        createProductListScreen(filterVisible = false, onFilterClick = { value -> emitted = value})
+
+        composeRule.onNodeWithTag(TOP_APP_BAR_BADGE_FILTER).performClick()
+
+        assertEquals(emitted, true)
+    }
+
+    @Test
+    fun givenProductListRendered_whenSettingsIconClicked_thenEmitCallback() {
+        var settingsClicked = false
+
+        createProductListScreen(navigateToSettings = { settingsClicked = true })
+
+        composeRule.onNodeWithTag(TOP_APP_BAR_SETTINGS).performClick()
+
+        assertEquals(settingsClicked, true)
+    }
+
+    @Test
+    fun givenProductListRendered_whenCartIconClicked_thenEmitCallback() {
+        var cartClicked = false
+
+        createProductListScreen(navigateToCart = { cartClicked = true })
+
+        composeRule.onNodeWithTag(TOP_APP_BAR_CART).performClick()
+
+        assertEquals(cartClicked, true)
     }
 
 }

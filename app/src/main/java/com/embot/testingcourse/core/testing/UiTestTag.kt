@@ -2,8 +2,12 @@ package com.embot.testingcourse.core.testing
 
 object UiTestTag {
 
+    // TOP APP BAR
     const val SETTINGS_TOP_APP_BAR_BACK = "SETTINGS_TOP_APP_BAR_BACK"
     const val TOP_APP_BAR_BADGE = "TOP_APP_BAR_BADGE"
+    const val TOP_APP_BAR_BADGE_FILTER = "TOP_APP_BAR_BADGE_FILTER"
+    const val TOP_APP_BAR_SETTINGS = "TOP_APP_BAR_SSTTINGS_ICON"
+    const val TOP_APP_BAR_CART = "TOP_APP_BAR_CART_ICON"
     const val FILTER_VIEW = "FILTER_VIEW"
 
     //SETTINGS
