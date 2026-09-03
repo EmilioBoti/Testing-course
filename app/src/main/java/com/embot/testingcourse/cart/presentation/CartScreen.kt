@@ -40,18 +40,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.embot.testingcourse.R
 import com.embot.testingcourse.cart.domain.model.CartSummary
 import com.embot.testingcourse.cart.presentation.model.CartItemWithPromotion
 import com.embot.testingcourse.core.presentation.components.MarketTopAppBar
 import com.embot.testingcourse.core.presentation.components.QuantitySelector
+import com.embot.testingcourse.core.testing.UiTestTag.CART_EMPTY
+import com.embot.testingcourse.core.testing.UiTestTag.CART_ERROR_MESSAGE
+import com.embot.testingcourse.core.testing.UiTestTag.CART_LOADING
+import com.embot.testingcourse.core.testing.UiTestTag.CART_RETRY_BUTTON
+import com.embot.testingcourse.core.testing.UiTestTag.PRODUCT_LIST_LOADING
 import com.embot.testingcourse.productList.domain.model.ProductPromotion
 import java.text.NumberFormat
 import java.util.Currency
@@ -63,50 +70,71 @@ fun CartScreen(
 ) {
 
     val uiState by cartViewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         cartViewModel.events.collect { event ->
             when (event) {
-                is CartEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
+                is CartEvent.ShowMessage -> snackBarHostState.showSnackbar(event.message)
             }
         }
     }
 
+    CartContentScreen(
+        uiState = uiState,
+        onBack = onBack,
+        onRefresh = cartViewModel::refresh,
+        onDecreaseQuantity = cartViewModel::decreaseQuantity,
+        onIncreaseQuantity = cartViewModel::increaseQuantity,
+        onRemove = cartViewModel::removeFromCart,
+        snackBarHostState = snackBarHostState,
+    )
+
+}
+
+@Composable
+fun CartContentScreen(
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    uiState: CartUiState,
+    onRefresh: () -> Unit,
+    onBack: () -> Unit,
+    onDecreaseQuantity: (String, Int) -> Unit,
+    onIncreaseQuantity: (String, Int) -> Unit,
+    onRemove: (String) -> Unit,
+) {
     Scaffold(
-        topBar = { MarketTopAppBar(title = "Cart", onBackClick = onBack) },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        topBar = { MarketTopAppBar(title = stringResource(R.string.cart_title), onBackClick = onBack) },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when (val state = uiState) {
+            when (uiState) {
                 CartUiState.Loading -> CartLoadingStateScreen(Modifier.fillMaxSize())
-                is CartUiState.Error -> CartErroStateScreen(
+                is CartUiState.Error -> CartErrorStateScreen(
                     modifier = Modifier.fillMaxSize(),
-                    error = state,
-                    onRetryClick = { cartViewModel.refresh() }
+                    error = uiState,
+                    onRetryClick = onRefresh
                 )
 
                 is CartUiState.Success -> {
-                    CartContentScreen(
+                    CartSuccessStateScreen(
                         modifier = Modifier.fillMaxSize(),
-                        state = state,
-                        onDecreaseQuantity = cartViewModel::decreaseQuantity,
-                        onIncreaseQuantity = cartViewModel::increaseQuantity,
-                        onRemove = cartViewModel::removeFromCart
+                        state = uiState,
+                        onDecreaseQuantity = onDecreaseQuantity,
+                        onIncreaseQuantity = onIncreaseQuantity,
+                        onRemove = onRemove
                     )
                 }
             }
         }
     }
-
 }
 
 @Composable
-fun CartContentScreen(
+fun CartSuccessStateScreen(
     modifier: Modifier = Modifier,
     state: CartUiState.Success,
     onDecreaseQuantity: (String, Int) -> Unit,
@@ -125,7 +153,7 @@ fun CartContentScreen(
         AnimatedContent(state.cartItems.isEmpty()) { isEmpty ->
             if (isEmpty) {
                 Column(
-                    modifier = modifier.fillMaxSize(),
+                    modifier = modifier.fillMaxSize().testTag(CART_EMPTY),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -137,7 +165,7 @@ fun CartContentScreen(
                         modifier = Modifier.padding(12.dp)
                     )
                     Text(
-                        text = "Add products",
+                        text = stringResource(R.string.add_products),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -189,7 +217,8 @@ fun CartSummaryCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
@@ -403,12 +432,12 @@ fun CartLoadingStateScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(modifier = Modifier.testTag(CART_LOADING))
     }
 }
 
 @Composable
-fun CartErroStateScreen(
+fun CartErrorStateScreen(
     modifier: Modifier = Modifier,
     error: CartUiState.Error,
     onRetryClick: () -> Unit
@@ -419,12 +448,14 @@ fun CartErroStateScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
+            modifier = Modifier.testTag(CART_ERROR_MESSAGE),
             text = "Error: ${error.message}",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
+            modifier = Modifier.testTag(CART_RETRY_BUTTON),
             onClick = onRetryClick
         ) {
             Text(text = "Retry")

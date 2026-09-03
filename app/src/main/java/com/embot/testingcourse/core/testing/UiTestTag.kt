@@ -24,4 +24,11 @@ object UiTestTag {
     fun productListItem(productId: String) = "product_list_item_$productId"
     fun productListCategory(category: String?) = "product_list_category_${category ?: "all"}"
     fun productListSort(sortOptionName: String) = "product_list_sort_option_${sortOptionName.lowercase()}"
+
+    //CART LIST
+    const val CART_LOADING = "CART_LOADING"
+    const val CART_ERROR_MESSAGE = "CART_ERROR_MESSAGE"
+    const val CART_RETRY_BUTTON = "CART_RETRY_BUTTON"
+    const val CART_EMPTY = "CART_EMPTY"
+
 }

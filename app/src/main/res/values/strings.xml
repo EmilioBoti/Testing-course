@@ -12,4 +12,6 @@
     <string name="theme_system_mode">System</string>
     <string name="theme_dark_mode">Dark</string>
     <string name="theme_light_mode">Light</string>
+    <string name="cart_title">Cart</string>
+    <string name="add_products">Add products</string>
 </resources>
