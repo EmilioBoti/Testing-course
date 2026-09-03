@@ -165,4 +165,37 @@ class ProductListScreenTest {
         assertEquals(cartClicked, true)
     }
 
+    @Test
+    fun givenProductListRendered_thenSortDiscountClick_thenEmitsSortDiscountOption() {
+        var selectedSort: SortOption? = null
+
+        createProductListScreen(onSortSelected = { emitted -> selectedSort = emitted })
+
+        composeRule.onNodeWithTag(UiTestTag.productListSort(SortOption.DISCOUNT.name)).performClick()
+
+        assertEquals(SortOption.DISCOUNT, selectedSort)
+    }
+
+    @Test
+    fun givenProductListRendered_thenSortPriceAscClick_thenEmitsSortPriceAscOption() {
+        var selectedSort: SortOption? = null
+
+        createProductListScreen(onSortSelected = { emitted -> selectedSort = emitted })
+
+        composeRule.onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_ASC.name)).performClick()
+
+        assertEquals(SortOption.PRICE_ASC, selectedSort)
+    }
+
+    @Test
+    fun givenProductListRendered_thenSortPriceDescClick_thenEmitsSortPriceDescOption() {
+        var selectedSort: SortOption? = null
+
+        createProductListScreen(onSortSelected = { emitted -> selectedSort = emitted })
+
+        composeRule.onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_DESC.name)).performClick()
+
+        assertEquals(SortOption.PRICE_DESC, selectedSort)
+    }
+
 }

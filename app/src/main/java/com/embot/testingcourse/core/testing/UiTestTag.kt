@@ -22,5 +22,6 @@ object UiTestTag {
     const val PRODUCT_LIST_LIST = "PRODUCT_LIST_LIST"
 
     fun productListItem(productId: String) = "product_list_item_$productId"
-    fun productListCategory(category: String?) = "product_list_category_${category ?: "add"}"
+    fun productListCategory(category: String?) = "product_list_category_${category ?: "all"}"
+    fun productListSort(sortOptionName: String) = "product_list_sort_option_${sortOptionName.lowercase()}"
 }

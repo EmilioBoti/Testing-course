@@ -98,6 +98,7 @@ fun FilterMenu(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
+                    modifier = Modifier.weight(1f).testTag(UiTestTag.productListSort(SortOption.PRICE_ASC.name)),
                     selected = state.sortOption === SortOption.PRICE_ASC,
                     onClick = { onSortSelected(SortOption.PRICE_ASC) },
                     label = {
@@ -106,9 +107,9 @@ fun FilterMenu(
                             style = MaterialTheme.typography.labelSmall
                         )
                     },
-                    modifier = Modifier.weight(1f)
                 )
                 FilterChip(
+                    modifier = Modifier.weight(1f).testTag(UiTestTag.productListSort(SortOption.PRICE_DESC.name)),
                     selected = state.sortOption === SortOption.PRICE_DESC,
                     onClick = { onSortSelected(SortOption.PRICE_DESC) },
                     label = {
@@ -116,10 +117,10 @@ fun FilterMenu(
                             text = "Precio ↓",
                             style = MaterialTheme.typography.labelSmall
                         )
-                    },
-                    modifier = Modifier.weight(1f)
+                    }
                 )
                 FilterChip(
+                    modifier = Modifier.weight(1f).testTag(UiTestTag.productListSort(SortOption.DISCOUNT.name)),
                     selected = state.sortOption === SortOption.DISCOUNT,
                     onClick = { onSortSelected(SortOption.DISCOUNT) },
                     label = {
@@ -127,8 +128,7 @@ fun FilterMenu(
                             text = "Discount",
                             style = MaterialTheme.typography.labelSmall
                         )
-                    },
-                    modifier = Modifier.weight(1f)
+                    }
                 )
             }
         }
