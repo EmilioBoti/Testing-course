@@ -2,6 +2,7 @@ package com.embot.testingcourse.productList.presentation
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import com.embot.testingcourse.core.mothers.uistate.ProductListUiStateMother
 import com.embot.testingcourse.productList.domain.model.SortOption
 import org.junit.Assert.*
 import org.junit.Rule
@@ -13,7 +14,7 @@ class ProductListScreenTest {
 
 
     private fun createProductListScreen(
-        uiState: ProductListUiState = ProductListUiState.Loading,
+        uiState: ProductListUiState = ProductListUiStateMother.success(),
         cartItemCount: Int = 0,
         filterVisible: Boolean = true,
         onFilterClick: (Boolean) -> Unit = {},
