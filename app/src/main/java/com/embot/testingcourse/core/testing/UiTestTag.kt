@@ -31,4 +31,8 @@ object UiTestTag {
     const val CART_RETRY_BUTTON = "CART_RETRY_BUTTON"
     const val CART_EMPTY = "CART_EMPTY"
 
+    fun cartItem(productId: String) = "cart_item_$productId"
+    fun cartQuantityIncrease(productId: String) = "cart_quantity_increase$productId"
+    fun cartQuantityDecrease(productId: String) = "cart_quantity_decrease$productId"
+
 }

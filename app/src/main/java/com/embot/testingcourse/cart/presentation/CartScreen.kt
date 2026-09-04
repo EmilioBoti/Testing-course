@@ -54,11 +54,11 @@ import com.embot.testingcourse.cart.domain.model.CartSummary
 import com.embot.testingcourse.cart.presentation.model.CartItemWithPromotion
 import com.embot.testingcourse.core.presentation.components.MarketTopAppBar
 import com.embot.testingcourse.core.presentation.components.QuantitySelector
+import com.embot.testingcourse.core.testing.UiTestTag
 import com.embot.testingcourse.core.testing.UiTestTag.CART_EMPTY
 import com.embot.testingcourse.core.testing.UiTestTag.CART_ERROR_MESSAGE
 import com.embot.testingcourse.core.testing.UiTestTag.CART_LOADING
 import com.embot.testingcourse.core.testing.UiTestTag.CART_RETRY_BUTTON
-import com.embot.testingcourse.core.testing.UiTestTag.PRODUCT_LIST_LOADING
 import com.embot.testingcourse.productList.domain.model.ProductPromotion
 import java.text.NumberFormat
 import java.util.Currency
@@ -319,7 +319,7 @@ fun CartItemCard(
     }
 
     SwipeToDismissBox(
-        modifier = modifier,
+        modifier = modifier.testTag(UiTestTag.cartItem(product.id)),
         state = dismissState,
         enableDismissFromEndToStart = false,
         backgroundContent = {
@@ -415,7 +415,9 @@ fun CartItemCard(
                         canDecrease = cartItem.quantity > 1,
                         canIncrease = cartItem.quantity < product.stock,
                         onDecreaseClick = { onDecreaseQuantity(product.id, cartItem.quantity) },
-                        onIncreaseClick = { onIncreaseQuantity(product.id, cartItem.quantity) }
+                        onIncreaseClick = { onIncreaseQuantity(product.id, cartItem.quantity) },
+                        increaseTestTag = UiTestTag.cartQuantityIncrease(product.id),
+                        decreaseTestTag = UiTestTag.cartQuantityDecrease(product.id)
                     )
                 }
             }
