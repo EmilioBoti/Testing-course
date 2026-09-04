@@ -16,8 +16,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_BADGE
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_BADGE_FILTER
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_CART
+import com.embot.testingcourse.core.testing.UiTestTag.TOP_APP_BAR_SETTINGS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,6 +47,7 @@ fun HomeTopAppBar(
         ),
         actions = {
             IconButton(
+                modifier = Modifier.testTag(TOP_APP_BAR_BADGE_FILTER),
                 onClick = { onFilterClick(!filterVisible) }
             ) {
                 Icon(
@@ -51,6 +57,7 @@ fun HomeTopAppBar(
                 )
             }
             IconButton(
+                modifier = Modifier.testTag(TOP_APP_BAR_SETTINGS),
                 onClick = { onSettingsClick() }
             ) {
                 Icon(
@@ -64,7 +71,9 @@ fun HomeTopAppBar(
                 badge = {
                     val badgeCount = if (cartItemCount > 99) "99+" else cartItemCount.toString()
                     if (cartItemCount > 0) {
-                        Badge {
+                        Badge(
+                            modifier = Modifier.testTag(TOP_APP_BAR_BADGE)
+                        ) {
                             Text(
                                 text = badgeCount,
                                 style = MaterialTheme.typography.labelSmall,
@@ -75,6 +84,7 @@ fun HomeTopAppBar(
                 }
             ) {
                 IconButton(
+                    modifier = Modifier.testTag(TOP_APP_BAR_CART),
                     onClick = { onShoppingCartClick() }
                 ) {
                     Icon(

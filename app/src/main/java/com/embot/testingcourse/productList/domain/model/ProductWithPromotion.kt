@@ -2,7 +2,7 @@ package com.embot.testingcourse.productList.domain.model
 
 data class ProductWithPromotion(
     val product: Product,
-    val promotion: ProductPromotion?
+    val promotion: ProductPromotion? = null
 )
 
 sealed interface ProductPromotion {

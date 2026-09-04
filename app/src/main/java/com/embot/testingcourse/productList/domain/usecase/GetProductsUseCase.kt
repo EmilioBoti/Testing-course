@@ -1,6 +1,7 @@
 package com.embot.testingcourse.productList.domain.usecase
 
 import com.embot.testingcourse.cart.domain.extensions.activeAt
+import com.embot.testingcourse.core.domain.utils.Clock
 import com.embot.testingcourse.productList.domain.model.ProductWithPromotion
 import com.embot.testingcourse.productList.domain.repository.ProductRepository
 import com.embot.testingcourse.productList.domain.repository.PromotionRepository
@@ -14,7 +15,8 @@ class GetProductsUseCase @Inject constructor(
     private val productRepository: ProductRepository,
     private val promotionRepository: PromotionRepository,
     private val getPromotionForProduct: GetPromotionForProduct,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val clock: Clock
 ) {
 
     operator  fun invoke(): Flow<List<ProductWithPromotion>> {
@@ -23,12 +25,12 @@ class GetProductsUseCase @Inject constructor(
             promotionRepository.getActivePromotions(),
             settingsRepository.inStockOnly
         ) { products, promotions, inStockOnly ->
-            val now = Instant.now()
+            val now = clock.now()
 
             val activePromotions = promotions.activeAt(now)
 
             val filteredProduct = if (inStockOnly) {
-                products.filter { product -> product.stock >= 0 }
+                products.filter { product -> product.stock > 0 }
             } else {
                 products
             }

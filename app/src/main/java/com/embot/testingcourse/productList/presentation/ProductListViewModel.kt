@@ -28,10 +28,46 @@ import javax.inject.Inject
 class ProductListViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val settingsRepository: SettingsRepository
-): ViewModel() {
+) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<ProductListUiState> = MutableStateFlow(ProductListUiState.Loading)
-    val uiState: StateFlow<ProductListUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<ProductListUiState> = combine(
+        getProductsUseCase(),
+        settingsRepository.selectedCategory,
+        settingsRepository.sortOption
+    ) { products, category, sortOption ->
+        var filteredProduct = products
+
+        if (category != null) {
+            filteredProduct = filteredProduct.filter { it.product.category == category }
+        }
+
+        val sortedProduct = when (sortOption) {
+            SortOption.NONE -> filteredProduct
+            SortOption.PRICE_ASC -> filteredProduct.sortedBy { effectivePrice(it) }
+            SortOption.PRICE_DESC -> filteredProduct.sortedByDescending { effectivePrice(it) }
+            SortOption.DISCOUNT ->
+                filteredProduct.sortedWith(
+                    comparator = compareByDescending<ProductWithPromotion> {
+                        effectiveDiscountPercent(it)
+                    }.thenBy { it.promotion == null }
+                )
+        }
+
+        val categories: List<String> = products.map { it.product.category }.distinct().sorted()
+
+        ProductListUiState.Success(
+            productList = sortedProduct,
+            categories = categories,
+            selectedCategory = category,
+            sortOption = sortOption
+        ) as ProductListUiState
+    }.catch { e: Throwable ->
+        emit(ProductListUiState.Error(e.message.orEmpty()))
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ProductListUiState.Loading
+    )
 
     val filterVisible: StateFlow<Boolean> = settingsRepository.filterVisible.stateIn(
         scope = viewModelScope,
@@ -39,57 +75,8 @@ class ProductListViewModel @Inject constructor(
         initialValue = true,
     )
 
-    private val _events: MutableSharedFlow<ProductListEvent> = MutableSharedFlow<ProductListEvent>(extraBufferCapacity = 1)
+    private val _events: MutableSharedFlow<ProductListEvent> = MutableSharedFlow(extraBufferCapacity = 1)
     val events: SharedFlow<ProductListEvent> = _events
-
-    private var productsJob: Job? = null
-
-    init {
-        loadProduct()
-    }
-
-    fun loadProduct() {
-        _uiState.update { ProductListUiState.Loading }
-        productsJob?.cancel()
-
-        productsJob = combine(
-            getProductsUseCase(),
-            settingsRepository.selectedCategory,
-            settingsRepository.sortOption
-        ) { products, category, sortOption ->
-            var filteredProduct = products
-
-            if (category != null) {
-                filteredProduct = filteredProduct.filter { it.product.category == category }
-            }
-
-            val sortedProduct = when(sortOption) {
-                SortOption.NONE -> filteredProduct
-                SortOption.PRICE_ASC -> filteredProduct.sortedBy { effectivePrice(it) }
-                SortOption.PRICE_DESC -> filteredProduct.sortedByDescending { effectivePrice(it) }
-                SortOption.DISCOUNT ->
-//                    filteredProduct.sortedByDescending { effectiveDiscountPercent(it) }
-                    filteredProduct.sortedWith(
-                        comparator = compareByDescending<ProductWithPromotion> {
-                            effectiveDiscountPercent(it)
-                        }.thenBy { it.promotion == null }
-                    )
-            }
-
-            val categories: List<String> = products.map { it.product.category }.distinct().sorted()
-
-            ProductListUiState.Success(
-                productList = sortedProduct,
-                categories = categories,
-                selectedCategory = category,
-                sortOption = sortOption
-            )
-        }.onEach { state ->
-            _uiState.value = state
-        }.catch { e: Throwable ->
-            _uiState.value = ProductListUiState.Error(e.message.orEmpty())
-        }.launchIn(viewModelScope)
-    }
 
     fun setCategory(category: String?) {
         viewModelScope.launch {
@@ -110,14 +97,14 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun effectivePrice(item: ProductWithPromotion): Double {
-        return when(val pormo = item.promotion) {
+        return when (val pormo = item.promotion) {
             is ProductPromotion.Percent -> pormo.discountPrice
             else -> item.product.price
         }
     }
 
     private fun effectiveDiscountPercent(item: ProductWithPromotion): Double {
-        return when(val promo = item.promotion) {
+        return when (val promo = item.promotion) {
             is ProductPromotion.Percent -> promo.percent
             else -> 0.0
         }

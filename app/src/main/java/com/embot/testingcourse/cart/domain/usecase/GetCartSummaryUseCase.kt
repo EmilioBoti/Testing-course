@@ -4,6 +4,7 @@ import com.embot.testingcourse.cart.domain.extensions.activeAt
 import com.embot.testingcourse.cart.domain.model.CartItem
 import com.embot.testingcourse.cart.domain.model.CartSummary
 import com.embot.testingcourse.cart.domain.repository.CartItemRepository
+import com.embot.testingcourse.core.domain.utils.Clock
 import com.embot.testingcourse.productList.domain.model.Product
 import com.embot.testingcourse.productList.domain.model.ProductPromotion
 import com.embot.testingcourse.productList.domain.model.Promotion
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import java.time.Instant
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -24,6 +24,7 @@ class GetCartSummaryUseCase @Inject constructor(
     private val productRepository: ProductRepository,
     private val promotionRepository: PromotionRepository,
     private val getPromotionForProduct: GetPromotionForProduct,
+    private val clock: Clock
 ) {
 
     operator fun invoke(): Flow<CartSummary> {
@@ -37,7 +38,7 @@ class GetCartSummaryUseCase @Inject constructor(
                         productRepository.getProductsByIds(ids),
                         promotionRepository.getActivePromotions()
                     ) { products, promotions ->
-                        calculateSummary(cartItems, products, promotions)
+                        calculateSummary(cartItems, products, promotions, clock)
                     }
                 }
             }
@@ -46,9 +47,10 @@ class GetCartSummaryUseCase @Inject constructor(
     private fun calculateSummary(
         cartItems: List<CartItem>,
         products: List<Product>,
-        promotions: List<Promotion>
+        promotions: List<Promotion>,
+        clock: Clock
     ): CartSummary {
-        val now = Instant.now()
+        val now = clock.now()
 
         val activePromotions = promotions.activeAt(now)
 

@@ -74,7 +74,8 @@ fun ProductDetailScreen(
                 isLoading = uiState.isLoading,
                 product = uiState.item?.product
             ) {
-                productDetailViewModel.addToCart()
+                val productId = uiState.item?.product?.id
+                productDetailViewModel.addToCart(productId)
             }
         }
     ) { paddingValues ->

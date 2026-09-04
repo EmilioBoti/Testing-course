@@ -17,9 +17,9 @@ fun NavigationGraph() {
     val entries = entryProvider<NavKey> {
         entry<Screen.ProductList> {
             ProductListScreen(
-                navigatoToSettings = { backStack.add(Screen.Settings) },
-                navigatoToCart = { backStack.add(Screen.Cart) },
-                navigatoToProductDetail = { productId ->
+                navigateToSettings = { backStack.add(Screen.Settings) },
+                navigateToCart = { backStack.add(Screen.Cart) },
+                navigateToProductDetail = { productId ->
                     backStack.add(
                         Screen.ProductDetail(
                             productId

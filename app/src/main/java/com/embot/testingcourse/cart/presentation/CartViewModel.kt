@@ -12,55 +12,47 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartItemRepository: CartItemRepository,
-    private val getCartSummaryUseCase: GetCartSummaryUseCase,
+    getCartSummaryUseCase: GetCartSummaryUseCase,
     private val updateCartItemUseCase: UpdateCartItemUseCase,
-    private val getCartItemWithPromotionUseCase: GetCartItemWithPromotionUseCase
+    getCartItemWithPromotionUseCase: GetCartItemWithPromotionUseCase
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState.Loading)
-    val uiState: StateFlow<CartUiState> = _uiState.asStateFlow()
+    private val refreshTriger: MutableSharedFlow<Unit> = MutableSharedFlow(extraBufferCapacity = 1)
+    val uiState: StateFlow<CartUiState> = combine(
+        refreshTriger.onStart { emit(Unit) },
+        getCartItemWithPromotionUseCase(),
+        getCartSummaryUseCase(),
+    ) { _, cartItemWithPromotion, summary ->
+        CartUiState.Success(
+            summary = summary,
+            cartItems = cartItemWithPromotion,
+            isLoading = false
+        ) as CartUiState
+    }.catch { e: Throwable ->
+        this.emit(CartUiState.Error(e.message.orEmpty()))
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = CartUiState.Loading
+    )
 
     private val _events: MutableSharedFlow<CartEvent> = MutableSharedFlow(extraBufferCapacity = 1)
     val events: SharedFlow<CartEvent> = _events
-
-    private var cartJob: Job? = null
-
-    init {
-        loadCart()
-    }
-
-    fun loadCart() {
-        _uiState.update { CartUiState.Loading }
-        cartJob?.cancel()
-
-        cartJob = combine(
-            getCartItemWithPromotionUseCase(),
-            getCartSummaryUseCase()
-        ) { cartItemWithPromotion, summary ->
-            _uiState.update {
-                CartUiState.Success(
-                    summary = summary,
-                    cartItems = cartItemWithPromotion,
-                    isLoading = false
-                )
-            }
-        }.catch { e: Throwable ->
-            _uiState.update { CartUiState.Error(e.message.orEmpty()) }
-        }.launchIn(viewModelScope)
-    }
 
     private fun updateCartItem(productId: String, quantity: Int) {
         viewModelScope.launch {
@@ -92,6 +84,10 @@ class CartViewModel @Inject constructor(
         } else {
             removeFromCart(productId)
         }
+    }
+
+    fun refresh() {
+        refreshTriger.tryEmit(Unit)
     }
 
 }
